@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Social Post Scheduler</title>
+
+    <!-- Google Fonts: Syne (display) + DM Sans (body) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@300;400;500&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="style.css" />
+  </head>
+
+  <body>
+    <!-- ==============================
+         PAGE WRAPPER
+         ============================== -->
+    <div class="page-wrapper">
+
+      <!-- Header / Branding -->
+      <header class="app-header">
+        <span class="logo-icon">&#9654;</span>
+        <h1 class="app-title">PostScheduler</h1>
+        <p class="app-subtitle">Queue your content. Ship it on time.</p>
+      </header>
+
+      <!-- ==============================
+           MAIN CARD
+           ============================== -->
+      <main class="card">
+
+        <!-- ----- FORM ----- -->
+        <form id="scheduleForm" novalidate>
+
+          <!-- Post Caption -->
+          <div class="form-group">
+            <label for="caption">Post Caption</label>
+            <textarea
+              id="caption"
+              name="caption"
+              rows="4"
+              placeholder="Write your post content here…"
+            ></textarea>
+            <!-- Error message shown by JS when field is empty -->
+            <span class="field-error" id="captionError"></span>
+          </div>
+
+          <!-- Platform -->
+          <div class="form-group">
+            <label for="platform">Platform</label>
+            <div class="select-wrapper">
+              <select id="platform" name="platform">
+                <option value="">— Select a platform —</option>
+                <option value="Twitter/X">Twitter / X</option>
+                <option value="Facebook">Facebook</option>
+                <option value="Instagram">Instagram</option>
+              </select>
+            </div>
+            <span class="field-error" id="platformError"></span>
+          </div>
+
+          <!-- Scheduled Date & Time -->
+          <div class="form-group">
+            <label for="scheduledAt">Scheduled Date &amp; Time</label>
+            <input
+              type="datetime-local"
+              id="scheduledAt"
+              name="scheduledAt"
+            />
+            <span class="field-error" id="scheduledAtError"></span>
+          </div>
+
+          <!-- Two-column row: Name + Email -->
+          <div class="form-row">
+
+            <div class="form-group">
+              <label for="name">Your Name</label>
+              <input
+                type="text"
+                id="name"
+                name="name"
+                placeholder="Juan dela Cruz"
+              />
+              <span class="field-error" id="nameError"></span>
+            </div>
+
+            <div class="form-group">
+              <label for="email">Email Address</label>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                placeholder="you@example.com"
+              />
+              <span class="field-error" id="emailError"></span>
+            </div>
+
+          </div><!-- /.form-row -->
+
+          <!-- Submit Button -->
+          <button type="submit" id="submitBtn" class="btn-submit">
+            <!-- Default label -->
+            <span class="btn-label">Schedule Post</span>
+
+            <!-- Loading spinner (hidden by default) -->
+            <span class="btn-spinner" aria-hidden="true"></span>
+          </button>
+
+        </form><!-- /#scheduleForm -->
+
+        <!-- ==============================
+             FEEDBACK MESSAGES
+             (hidden by default; shown by JS)
+             ============================== -->
+
+        <!-- Success -->
+        <div class="feedback success" id="successMsg" hidden>
+          <span class="feedback-icon">&#10003;</span>
+          <div>
+            <strong>Post scheduled!</strong>
+            <p>Your post has been sent to Make.com successfully.</p>
+          </div>
+        </div>
+
+        <!-- Error -->
+        <div class="feedback error" id="errorMsg" hidden>
+          <span class="feedback-icon">&#33;</span>
+          <div>
+            <strong>Something went wrong.</strong>
+            <p id="errorDetail">Please try again or check your connection.</p>
+          </div>
+        </div>
+
+      </main><!-- /.card -->
+
+    </div><!-- /.page-wrapper -->
+
+    <script src="script.js"></script>
+  </body>
+</html>

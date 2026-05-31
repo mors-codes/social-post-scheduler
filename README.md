@@ -59,7 +59,7 @@ scheduler/
 
 ### 1. Clone the repo:
 ```bash
-git clone https://github.com/morscodes777/social-post-scheduler.git
+git clone https://github.com/mors-codes/social-post-scheduler.git
 cd social-post-scheduler
 ```
 

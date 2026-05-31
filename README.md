@@ -1,6 +1,6 @@
 # 📅 Social Media Post Scheduler
 
-A clean, responsive post scheduling web app that sends form data to a Make.com webhook — automatically logging submissions to Google Sheets and sending a confirmation email via Gmail.
+A clean, responsive post scheduling web app that sends form data to a Make.com webhook — automatically generating AI hashtags, logging submissions to Google Sheets, and sending a personalized AI-written confirmation email via Gmail.
 
 ![Post Scheduler Preview](preview.png)
 
@@ -12,8 +12,9 @@ A clean, responsive post scheduling web app that sends form data to a Make.com w
 - Loading spinner during submission
 - Success and error feedback messages
 - No page reload on submit
-- Automatic logging to Google Sheets
-- Confirmation email sent via Gmail
+- AI-generated hashtags based on post caption
+- AI-written personalized confirmation email
+- Automatic logging to Google Sheets (including AI hashtags)
 - Mobile responsive design
 - Clean minimalist UI with smooth transitions and hover effects
 
@@ -23,9 +24,10 @@ A clean, responsive post scheduling web app that sends form data to a Make.com w
 
 1. User fills out the scheduling form (caption, platform, date/time, name, email)
 2. Form validates inputs and sends a JSON POST request to Make.com webhook
-3. Make.com logs the submission as a new row in Google Sheets
-4. Make.com sends a confirmation email to the user via Gmail
-5. User sees a success message in the browser
+3. Make.com passes the data to **AI by Make** which generates hashtags and a personalized email
+4. Make.com logs the submission + AI hashtags as a new row in Google Sheets
+5. Make.com sends the AI-generated confirmation email to the user via Gmail
+6. User sees a success message in the browser
 
 ---
 
@@ -38,8 +40,9 @@ A clean, responsive post scheduling web app that sends form data to a Make.com w
 
 **Backend / Automation:**
 - [Make.com](https://make.com/) — webhook automation
+- [AI by Make](https://make.com/) — AI hashtag and email generation (no API key needed)
 - [Google Sheets](https://sheets.google.com/) — submission logging
-- [Gmail](https://gmail.com/) — confirmation email
+- [Gmail](https://gmail.com/) — AI-powered confirmation email
 
 ---
 
@@ -65,26 +68,57 @@ cd social-post-scheduler
 
 ### 2. Set up Make.com scenario:
 
-**Create a new scenario:**
-1. Add a **Webhooks → Custom Webhook** module as the trigger
-2. Copy the generated webhook URL
+**Create a new scenario with these modules in order:**
+1. **Webhooks → Custom Webhook** — receives form data
+2. **Make AI Toolkit → Simple Text Prompt** — generates hashtags + personalized email
+3. **Google Sheets → Add a Row** — logs submission data
+4. **Gmail → Send an Email** — sends AI-generated confirmation email
 
-**Add Actions:**
-1. **Google Sheets → Add a Row** — logs submission data to your spreadsheet
-2. **Gmail → Send an Email** — sends confirmation email to the user
+### 3. Configure the AI prompt:
 
-### 3. Configure the webhook URL:
+In the **Make AI Toolkit** module, use this prompt:
+
+```
+You are a social media assistant. Based on the following post details, do two things:
+
+1. Generate 5 relevant hashtags for the post
+2. Write a short personalized confirmation email to the user
+
+Post Details:
+- Caption: {{1.caption}}
+- Platform: {{1.platform}}
+- Scheduled At: {{1.scheduledAt}}
+- Name: {{1.name}}
+
+Format your response exactly like this:
+HASHTAGS: #tag1 #tag2 #tag3 #tag4 #tag5
+
+EMAIL:
+Hi {{1.name}},
+
+Your post has been scheduled successfully!
+
+Caption: {{1.caption}}
+Platform: {{1.platform}}
+Scheduled At: {{1.scheduledAt}}
+
+[write 1-2 personalized sentences here based on the caption]
+
+Thanks for using PostScheduler!
+```
+
+### 4. Configure the webhook URL:
 
 Open `script.js` and replace the placeholder on line 1:
 ```javascript
 const WEBHOOK_URL = "https://hook.us2.make.com/your-actual-webhook-url";
 ```
 
-### 4. Test it out:
+### 5. Test it out:
 
 Open `index.html` in your browser — no installs, no build steps, no dependencies.
 
-> Make sure to click **"Run once"** in Make.com the first time, then enable **Scheduling** so the scenario runs automatically.
+> Make sure to enable **Scheduling** in Make.com so the scenario runs automatically without clicking "Run once" every time.
 
 ---
 
@@ -92,27 +126,21 @@ Open `index.html` in your browser — no installs, no build steps, no dependenci
 
 Create a spreadsheet named `Post Scheduler Log` with these headers in row 1:
 
-| A | B | C | D | E | F |
-|---|---|---|---|---|---|
-| Caption | Platform | Scheduled At | Name | Email | Submitted At |
+| A | B | C | D | E | F | G |
+|---|---|---|---|---|---|---|
+| Caption | Platform | Scheduled At | Name | Email | Submitted At | Hashtags |
 
 Map each column in Make.com using:
-- `{{1.caption}}`, `{{1.platform}}`, `{{1.scheduledAt}}`, `{{1.name}}`, `{{1.email}}`, `{{now}}`
+- `{{1.caption}}`, `{{1.platform}}`, `{{1.scheduledAt}}`, `{{1.name}}`, `{{1.email}}`, `{{now}}`, `{{4.answer}}`
 
 ---
 
-## 📧 Gmail Confirmation Email
+## 🤖 AI Module Setup
 
-The confirmation email is sent using this template in the Make.com Gmail module:
-
-```html
-Hi {{1.name}},<br><br>
-Your post has been scheduled successfully!<br><br>
-Caption: {{1.caption}}<br>
-Platform: {{1.platform}}<br>
-Scheduled At: {{1.scheduledAt}}<br><br>
-Thanks for using PostScheduler!
-```
+- **Module:** Make AI Toolkit → Simple Text Prompt
+- **Model:** Medium (gpt-5-nano)
+- **Output variable:** `{{4.answer}}`
+- Used in Gmail content and Google Sheets Hashtags column
 
 ---
 
